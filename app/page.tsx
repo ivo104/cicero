@@ -15,7 +15,6 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { Room, RoomEvent } from "livekit-client";
 import { useCallback, useEffect, useState } from "react";
-import type { ConnectionDetails } from "./api/connection-details/route";
 
 export default function Page() {
   const [room] = useState(new Room());
@@ -35,7 +34,10 @@ export default function Page() {
       window.location.origin
     );
     const response = await fetch(url.toString());
-    const connectionDetailsData: ConnectionDetails = await response.json();
+	const connectionDetailsData: {
+  	serverUrl: string;
+  participantToken: string;
+} = await response.json();
 
     await room.connect(connectionDetailsData.serverUrl, connectionDetailsData.participantToken);
     await room.localParticipant.setMicrophoneEnabled(true);
