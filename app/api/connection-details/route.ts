@@ -1,31 +1,28 @@
 import { NextResponse } from 'next/server';
-import { AccessToken } from 'livekit-server-sdk';
+import { AccessToken } from 'livekit-server-sdk'; // ✅ this is the correct NPM package
+import { v4 as uuidv4 } from 'uuid';
 
 export async function GET() {
-  const serverUrl = process.env.LIVEKIT_URL;
   const apiKey = process.env.LIVEKIT_API_KEY;
   const apiSecret = process.env.LIVEKIT_API_SECRET;
+  const serverUrl = process.env.LIVEKIT_URL;
 
-  if (!serverUrl || !apiKey || !apiSecret) {
-    return NextResponse.json(
-      { error: 'Missing LIVEKIT_URL, LIVEKIT_API_KEY, or LIVEKIT_API_SECRET' },
-      { status: 500 }
-    );
+  if (!apiKey || !apiSecret || !serverUrl) {
+    return NextResponse.json({ error: 'Missing LiveKit environment variables' }, { status: 500 });
   }
 
-  // Generate a random room and participant name
-  const roomName = `room-${Math.floor(Math.random() * 10000)}`;
-  const participantName = `participant-${Math.floor(Math.random() * 10000)}`;
+  const roomName = `room-${uuidv4()}`;
+  const participantName = `user-${uuidv4()}`;
 
-  const token = new AccessToken(apiKey, apiSecret, {
+  const at = new AccessToken(apiKey, apiSecret, {
     identity: participantName,
   });
-  token.addGrant({ roomJoin: true, room: roomName });
+  at.addGrant({ roomJoin: true, room: roomName });
 
-  const accessToken = token.toJwt();
+  const token = await at.toJwt();
 
   return NextResponse.json({
     serverUrl,
-    participantToken: accessToken,
+    participantToken: token,
   });
 }
