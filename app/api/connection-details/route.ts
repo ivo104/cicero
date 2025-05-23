@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { AccessToken } from '@livekit/server-sdk';
+import { AccessToken } from 'livekit-server-sdk';
 
 export async function GET() {
   const serverUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL;
