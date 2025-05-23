@@ -1,22 +1,30 @@
-export async function GET() {
-  const url = process.env.NEXT_PUBLIC_LIVEKIT_URL;
-  const apiKey = process.env.NEXT_PUBLIC_LIVEKIT_API_KEY;
+import { NextResponse } from 'next/server';
+import { createLocalParticipantToken } from '@livekit/components-core';
 
-  if (!url || !apiKey) {
-    return new Response(JSON.stringify({ error: 'Missing LIVEKIT config' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+export async function GET() {
+  const serverUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL;
+  const apiKey = process.env.LIVEKIT_API_KEY;
+  const apiSecret = process.env.LIVEKIT_API_SECRET;
+
+  if (!serverUrl || !apiKey || !apiSecret) {
+    return NextResponse.json(
+      { error: 'Missing LiveKit environment variables' },
+      { status: 500 }
+    );
   }
 
-  return new Response(
-    JSON.stringify({
-      url,
-      apiKey,
-    }),
-    {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    }
-  );
+  const roomName = `room-${Math.floor(Math.random() * 9999)}`;
+  const participantName = `user-${Math.floor(Math.random() * 9999)}`;
+  const token = createLocalParticipantToken({
+    host: serverUrl,
+    room: roomName,
+    participantName,
+    apiKey,
+    apiSecret,
+  });
+
+  return NextResponse.json({
+    serverUrl,
+    participantToken: token,
+  });
 }
