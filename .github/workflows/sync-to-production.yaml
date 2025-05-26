@@ -29,6 +29,10 @@ jobs:
       - name: Sync to sandbox-production
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LIVEKIT_URL: ${{ secrets.LIVEKIT_URL }}
+          LIVEKIT_API_KEY: ${{ secrets.LIVEKIT_API_KEY }}
+          LIVEKIT_API_SECRET: ${{ secrets.LIVEKIT_API_SECRET }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           git checkout sandbox-production || git checkout -b sandbox-production
           git merge --strategy-option theirs main
