@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { AccessToken } from 'livekit-server-sdk'; // ✅ this is the correct NPM package
+import { AccessToken } from 'livekit-server-sdk';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function GET() {
